@@ -18,6 +18,13 @@ function groupColor(group: string) {
   }
 }
 
+function maturityColor(maturity: string) {
+  const m = String(maturity || '').toLowerCase()
+  if (m === 'evergreen') return '#89f0c7'
+  if (m === 'growing') return '#9fc2ff'
+  return '#ffd694'
+}
+
 export default function KnowledgeGraph({ graph }) {
   const [activeNode, setActiveNode] = useState<string | null>(null)
 
@@ -89,6 +96,7 @@ export default function KnowledgeGraph({ graph }) {
         {layout.points.map((node: any) => {
           const active = activeNode === node.id
           const fill = groupColor(node.group)
+          const ring = maturityColor(node.maturity)
           return (
             <g key={node.id} transform={`translate(${node.x}, ${node.y})`}>
               <circle
@@ -101,6 +109,7 @@ export default function KnowledgeGraph({ graph }) {
                 onClick={() => (window.location.href = node.slug ? `/blog/${node.slug}` : '#')}
                 style={{ cursor: 'pointer' }}
               />
+              <circle r={active ? 17 : 13} fill="none" stroke={ring} strokeWidth="1.2" opacity="0.65" />
               <text x="14" y="4" fill="#dce8ff" fontSize="11" pointerEvents="none">
                 {node.label}
               </text>

@@ -4,13 +4,15 @@ import { sanityFetch } from '@/lib/sanity'
 const blogQuery = `*[_type == "blogPost"] | order(_updatedAt desc)[0...3]{
   "title": coalesce(base->title, "Untitled Blog"),
   "excerpt": coalesce(base->excerpt, "İçerik özeti yakında eklenecek."),
-  "slug": base->slug.current
+  "slug": base->slug.current,
+  "maturity": coalesce(base->contentMaturity, "seed")
 }`
 
 const projectQuery = `*[_type == "caseStudy"] | order(_updatedAt desc)[0...3]{
   "title": coalesce(base->title, "Untitled Project"),
   "excerpt": coalesce(outcomeSummary, base->excerpt, "Vaka analizi özeti yakında eklenecek."),
-  "slug": base->slug.current
+  "slug": base->slug.current,
+  "maturity": coalesce(base->contentMaturity, "growing")
 }`
 
 const skillQuery = `*[_type == "skill"] | order(trendScore desc)[0...6]{
@@ -26,6 +28,7 @@ const fallback = {
       title: 'Digital Garden Başlangıç Notları',
       excerpt: 'Seed aşamasındaki fikirlerin ürünleşme sürecine dönüşümü.',
       slug: '#',
+      maturity: 'seed',
     },
   ],
   projects: [
@@ -33,6 +36,7 @@ const fallback = {
       title: 'E-ticaret Dönüşüm Dashboardu',
       excerpt: 'Case study metrikleri ile veri hikayeciliği tabanlı analiz.',
       slug: '#',
+      maturity: 'growing',
     },
   ],
   skills: [
@@ -124,6 +128,7 @@ const knowledgeGraphQuery = `*[_type == "contentBase" && kind == "blog_post"]{
   _id,
   title,
   "slug": slug.current,
+  "maturity": coalesce(contentMaturity, "seed"),
   "tags": tags[]->label,
   "related": relatedContents[]{
     relationType,
@@ -136,11 +141,11 @@ const knowledgeGraphQuery = `*[_type == "contentBase" && kind == "blog_post"]{
 
 const fallbackKnowledgeGraph = {
   nodes: [
-    { id: 'n1', label: 'Yapay Zeka Notları', slug: 'yapay-zeka-notlari', group: 'AI', weight: 1 },
-    { id: 'n2', label: 'NLP Pratikleri', slug: 'nlp-pratikleri', group: 'AI', weight: 1 },
-    { id: 'n3', label: 'Veri Hikayeciliği', slug: 'veri-hikayeciligi', group: 'Data', weight: 1 },
-    { id: 'n4', label: 'E-ticaret Analitik', slug: 'e-ticaret-analitik', group: 'Growth', weight: 1 },
-    { id: 'n5', label: 'Next.js Mimari', slug: 'nextjs-mimari', group: 'Web', weight: 1 },
+    { id: 'n1', label: 'Yapay Zeka Notları', slug: 'yapay-zeka-notlari', group: 'AI', weight: 1, maturity: 'seed' },
+    { id: 'n2', label: 'NLP Pratikleri', slug: 'nlp-pratikleri', group: 'AI', weight: 1, maturity: 'growing' },
+    { id: 'n3', label: 'Veri Hikayeciliği', slug: 'veri-hikayeciligi', group: 'Data', weight: 1, maturity: 'evergreen' },
+    { id: 'n4', label: 'E-ticaret Analitik', slug: 'e-ticaret-analitik', group: 'Growth', weight: 1, maturity: 'growing' },
+    { id: 'n5', label: 'Next.js Mimari', slug: 'nextjs-mimari', group: 'Web', weight: 1, maturity: 'evergreen' },
   ],
   edges: [
     { source: 'n1', target: 'n2', relationType: 'expands', strength: 0.8 },
@@ -159,6 +164,13 @@ function pickGroup(tags: string[] = []) {
   return 'General'
 }
 
+function normalizeMaturity(value: string) {
+  const v = String(value || '').toLowerCase().trim()
+  if (v === 'growing') return 'growing'
+  if (v === 'evergreen') return 'evergreen'
+  return 'seed'
+}
+
 export async function getKnowledgeGraphData() {
   const raw = await sanityFetch(knowledgeGraphQuery)
   if (!raw?.length) return fallbackKnowledgeGraph
@@ -169,6 +181,7 @@ export async function getKnowledgeGraphData() {
     slug: item.slug || '',
     group: pickGroup(item.tags || []),
     weight: Math.max(1, (item.related || []).length),
+    maturity: normalizeMaturity(item.maturity),
   }))
 
   const nodeSet = new Set(nodes.map((n: any) => n.id))

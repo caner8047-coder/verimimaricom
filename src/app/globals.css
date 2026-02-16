@@ -305,6 +305,36 @@ a {
   line-height: 1.35;
 }
 
+.maturity-chip {
+  margin-top: 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+}
+
+.maturity-chip.seed {
+  color: #ffe4b8;
+  border-color: rgba(255, 212, 151, 0.44);
+  background: rgba(255, 196, 130, 0.14);
+}
+
+.maturity-chip.growing {
+  color: #cfdfff;
+  border-color: rgba(170, 196, 255, 0.45);
+  background: rgba(139, 173, 255, 0.14);
+}
+
+.maturity-chip.evergreen {
+  color: #c9ffe8;
+  border-color: rgba(137, 240, 199, 0.5);
+  background: rgba(112, 214, 177, 0.14);
+}
+
 .card-list.compact li {
   padding: 0.48rem 0.55rem;
 }
@@ -868,6 +898,13 @@ a {
   margin: 0.55rem 0 0;
   color: var(--text-1);
   line-height: 1.45;
+}
+
+.maturity-legend {
+  margin-top: 0.7rem;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
 }
 
 .garden-graph {

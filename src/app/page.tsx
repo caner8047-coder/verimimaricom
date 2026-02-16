@@ -31,6 +31,11 @@ export default async function HomePage() {
             Düğümler içerikleri, çizgiler içerikler arası ilişkileri temsil eder. Bir düğüme tıklayarak
             ilgili yazıya geçiş yapabilirsiniz.
           </p>
+          <div className="maturity-legend" aria-label="İçerik olgunluk seviyeleri">
+            <span className="maturity-chip seed">Seed</span>
+            <span className="maturity-chip growing">Growing</span>
+            <span className="maturity-chip evergreen">Evergreen</span>
+          </div>
         </div>
         <KnowledgeGraph graph={graph} />
       </section>

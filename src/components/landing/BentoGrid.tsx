@@ -2,6 +2,13 @@
 import TrackLink from '@/components/analytics/TrackLink'
 
 export default function BentoGrid({ cms }) {
+  const maturityLabel = (value: string) => {
+    const v = String(value || '').toLowerCase()
+    if (v === 'evergreen') return 'Evergreen'
+    if (v === 'growing') return 'Growing'
+    return 'Seed'
+  }
+
   return (
     <section className="bento-grid" aria-label="Bento modüler ana panel">
       <article id="projeler" className="card glass span-8">
@@ -12,6 +19,9 @@ export default function BentoGrid({ cms }) {
             <li key={project.slug || index}>
               <a href={project.slug ? `/projeler/${project.slug}` : '#'}>{project.title}</a>
               <small>{project.excerpt}</small>
+              <span className={`maturity-chip ${project.maturity || 'seed'}`}>
+                {maturityLabel(project.maturity)}
+              </span>
             </li>
           ))}
         </ul>
@@ -33,6 +43,9 @@ export default function BentoGrid({ cms }) {
             <li key={post.slug || index}>
               <a href={post.slug ? `/blog/${post.slug}` : '#'}>{post.title}</a>
               <small>{post.excerpt}</small>
+              <span className={`maturity-chip ${post.maturity || 'seed'}`}>
+                {maturityLabel(post.maturity)}
+              </span>
             </li>
           ))}
         </ul>
