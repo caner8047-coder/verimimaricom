@@ -3,13 +3,8 @@ import { getCaseStudyBySlug } from '@/lib/cms'
 import MetricsBoard from '@/components/case-study/MetricsBoard'
 import { getCaseStudyJsonLd } from '@/lib/seo'
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
 import PremiumGate from '@/components/membership/PremiumGate'
-
-const MermaidDiagram = dynamic(() => import('@/components/case-study/MermaidDiagram'), {
-  ssr: false,
-  loading: () => <div className="mermaid-fallback">Şema yükleniyor...</div>,
-})
+import MermaidDiagram from '@/components/case-study/MermaidDiagram'
 
 type PageProps = {
   params: {

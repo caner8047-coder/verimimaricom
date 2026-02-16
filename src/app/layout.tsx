@@ -1,19 +1,14 @@
 // @ts-nocheck
 import './globals.css'
 import type { Metadata } from 'next'
-import dynamic from 'next/dynamic'
 import { Inter } from 'next/font/google'
+import VeriBotChat from '@/components/veribot/VeriBotChat'
 import { brandProfile, getGlobalJsonLd, getSiteUrl } from '@/lib/seo'
 
 const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-inter',
-})
-
-const VeriBotChat = dynamic(() => import('@/components/veribot/VeriBotChat'), {
-  ssr: false,
-  loading: () => null,
 })
 
 const siteUrl = getSiteUrl()
