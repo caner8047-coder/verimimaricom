@@ -4,8 +4,8 @@ export default function BentoGrid({ cms }) {
   return (
     <section className="bento-grid" aria-label="Bento modüler ana panel">
       <article id="projeler" className="card glass span-8">
-        <h3>Öne Çıkan Case Study</h3>
-        <p>Sanity CMS üzerinden gelen proje/vaka çalışmaları:</p>
+        <h3>Öne Çıkan Dönüşüm Vaka Analizleri</h3>
+        <p>Gerçek problem, uygulanan çözüm ve ölçülebilir etki sonuçlarını inceleyin.</p>
         <ul className="card-list">
           {cms.projects.map((project: any, index: number) => (
             <li key={project.slug || index}>
@@ -15,13 +15,13 @@ export default function BentoGrid({ cms }) {
           ))}
         </ul>
         <a className="card-cta" href="/projeler/ornek-vaka">
-          Tüm Projeleri Gör
+          Tüm Vaka Analizlerini Gör
         </a>
       </article>
 
       <article id="blog" className="card glass span-4">
-        <h3>Digital Garden Blog</h3>
-        <p>Son yayınlanan yazılar:</p>
+        <h3>Digital Garden Yazıları</h3>
+        <p>Veri hikayeciliği, ürün geliştirme ve AI uygulamaları üzerine son notlar.</p>
         <ul className="card-list compact">
           {cms.blogs.map((post: any, index: number) => (
             <li key={post.slug || index}>
@@ -31,13 +31,13 @@ export default function BentoGrid({ cms }) {
           ))}
         </ul>
         <a className="card-cta" href="/labs">
-          Yeni İçerikleri Keşfet
+          Yazıları Keşfet
         </a>
       </article>
 
       <article id="yetkinlik" className="card glass span-4">
-        <h3>Yetenek Takımyıldızı</h3>
-        <p>Tech Stack verileri CMS'ten canlı çekiliyor:</p>
+        <h3>Teknoloji Yığını ve Yetkinlik Haritası</h3>
+        <p>Projelerde kullanılan araçlar, diller ve platformlar tek bakışta.</p>
         <div className="skill-cloud">
           {cms.skills.map((skill: any, index: number) => (
             <span key={`${skill.name}-${index}`} className="skill-chip">
@@ -48,8 +48,8 @@ export default function BentoGrid({ cms }) {
       </article>
 
       <article id="lab" className="card glass span-4">
-        <h3>Canlı Laboratuvar</h3>
-        <p>Model demoları, prototipler ve yayınlanabilir deney notları için özel vitrin.</p>
+        <h3>Canlı Laboratuvar ve Prototipler</h3>
+        <p>Model demoları, hızlı deneyler ve ürünleşmeye hazır prototip yayınları.</p>
         <a className="card-cta" href="/labs">
           Laboratuvara Git
         </a>
@@ -57,14 +57,13 @@ export default function BentoGrid({ cms }) {
 
       <article id="kaynak" className="card glass span-4">
         <h3>Doküman ve Kaynak Merkezi</h3>
-        <p>Sunum, rapor ve dosya paylaşımları için güvenli indirme altyapısı.</p>
+        <p>Sunumlar, raporlar ve operasyonel dokümanlar için düzenli kaynak alanı.</p>
       </article>
 
       <article id="iletisim" className="card glass span-8">
-        <h3>İletişim ve İş Birliği</h3>
+        <h3>İş Birliği ve Danışmanlık</h3>
         <p>
-          Hedef odaklı iletişim akışı: recruiter, müşteri ve teknik ziyaretçi için ayrı giriş
-          noktaları.
+          Yeni ürün geliştirme, veri odaklı dönüşüm ve AI entegrasyonu için iletişime geçin.
         </p>
         <a className="card-cta" href="mailto:info@verimimari.com">
           İş Birliği Başlat

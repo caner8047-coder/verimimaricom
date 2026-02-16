@@ -8,12 +8,12 @@ export default function NavBar() {
         <span>VERİ MİMARI</span>
       </a>
       <nav className="nav-links">
-        <a href="#projeler">Projeler</a>
-        <a href="#blog">Blog</a>
+        <a href="#projeler">Vaka Analizleri</a>
+        <a href="#blog">Yazılar</a>
         <a href="/labs">Labs</a>
-        <a href="#yetkinlik">Yetkinlikler</a>
-        <a href="/uyelik">Üyelik</a>
-        <a href="#iletisim">İletişim</a>
+        <a href="#yetkinlik">Teknoloji Yığını</a>
+        <a href="/uyelik">Premium</a>
+        <a href="#iletisim">İş Birliği</a>
       </nav>
     </header>
   )
