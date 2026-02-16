@@ -1,5 +1,6 @@
 // @ts-nocheck
 import TrackLink from '@/components/analytics/TrackLink'
+import OpenCommandPaletteButton from '@/components/navigation/OpenCommandPaletteButton'
 
 export default function HeroPanel() {
   return (
@@ -37,9 +38,9 @@ export default function HeroPanel() {
         <span className="badge">Digital Garden</span>
       </div>
 
-      <div className="cmd-chip" aria-label="Komut paleti kısayolu">
+      <OpenCommandPaletteButton className="cmd-chip" source="hero-chip">
         Komuta Merkezi <kbd>⌘</kbd>+<kbd>K</kbd>
-      </div>
+      </OpenCommandPaletteButton>
     </section>
   )
 }

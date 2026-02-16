@@ -1,4 +1,5 @@
 // @ts-nocheck
+import OpenCommandPaletteButton from '@/components/navigation/OpenCommandPaletteButton'
 
 export default function NavBar() {
   return (
@@ -14,6 +15,9 @@ export default function NavBar() {
         <a href="#yetkinlik">Teknoloji Yığını</a>
         <a href="/uyelik">Premium</a>
         <a href="#iletisim">İş Birliği</a>
+        <OpenCommandPaletteButton className="nav-cmdk" source="navbar">
+          Komuta Merkezi
+        </OpenCommandPaletteButton>
       </nav>
     </header>
   )
