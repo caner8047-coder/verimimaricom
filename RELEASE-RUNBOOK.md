@@ -78,3 +78,12 @@ Referans: [`docs/analytics-event-dictionary.md`](docs/analytics-event-dictionary
 Smoke test URL'i varsayılan olarak `https://verimimari.com` kullanır. Gerekirse:
 
 `SMOKE_BASE_URL=https://<preview-domain> npm run smoke:test`
+
+## 8) CI Quality Gate Referansı
+
+- Workflow: [`.github/workflows/quality-gates.yml`](.github/workflows/quality-gates.yml)
+- Gate adımları: `npm ci` -> `npm run build` -> `npm run smoke:test`
+
+## 9) Incident Template
+
+- Şablon: [`docs/incident-report-template.md`](docs/incident-report-template.md)
