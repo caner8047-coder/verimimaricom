@@ -14,6 +14,9 @@ export default function BentoGrid({ cms }) {
             </li>
           ))}
         </ul>
+        <a className="card-cta" href="/projeler/ornek-vaka">
+          Tüm Projeleri Gör
+        </a>
       </article>
 
       <article id="blog" className="card glass span-4">
@@ -27,6 +30,9 @@ export default function BentoGrid({ cms }) {
             </li>
           ))}
         </ul>
+        <a className="card-cta" href="/labs">
+          Yeni İçerikleri Keşfet
+        </a>
       </article>
 
       <article id="yetkinlik" className="card glass span-4">
@@ -44,6 +50,9 @@ export default function BentoGrid({ cms }) {
       <article id="lab" className="card glass span-4">
         <h3>Canlı Laboratuvar</h3>
         <p>Model demoları, prototipler ve yayınlanabilir deney notları için özel vitrin.</p>
+        <a className="card-cta" href="/labs">
+          Laboratuvara Git
+        </a>
       </article>
 
       <article id="kaynak" className="card glass span-4">
@@ -57,6 +66,9 @@ export default function BentoGrid({ cms }) {
           Hedef odaklı iletişim akışı: recruiter, müşteri ve teknik ziyaretçi için ayrı giriş
           noktaları.
         </p>
+        <a className="card-cta" href="mailto:info@verimimari.com">
+          İş Birliği Başlat
+        </a>
       </article>
     </section>
   )

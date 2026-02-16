@@ -45,15 +45,19 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.8rem 1rem;
-  margin-bottom: 1rem;
+  padding: 0.95rem 1.1rem;
+  margin-bottom: 1.1rem;
+  position: sticky;
+  top: 0.7rem;
+  z-index: 40;
 }
 
 .top-nav .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.5rem;
   font-weight: 700;
+  letter-spacing: 0.01em;
 }
 
 .top-nav .dot {
@@ -72,14 +76,16 @@ a {
 
 .nav-links a {
   color: var(--text-1);
-  font-size: 0.88rem;
-  padding: 0.35rem 0.55rem;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.62rem;
   border-radius: 0.6rem;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
 .nav-links a:hover {
   color: var(--text-0);
   background: rgba(255, 255, 255, 0.07);
+  transform: translateY(-1px);
 }
 
 .glass {
@@ -92,9 +98,10 @@ a {
 }
 
 .hero {
-  padding: 2rem;
+  padding: 2.2rem;
   margin-bottom: 1.25rem;
   position: relative;
+  overflow: hidden;
 }
 
 .hero:before,
@@ -123,14 +130,39 @@ a {
 
 .hero h1 {
   margin: 0;
-  font-size: clamp(1.8rem, 3vw, 3rem);
-  line-height: 1.12;
+  font-size: clamp(2rem, 3.2vw, 3.2rem);
+  line-height: 1.08;
+  max-width: 20ch;
 }
 
 .hero p {
   color: var(--text-1);
-  margin: 0.8rem 0 0;
+  margin: 0.9rem 0 0;
   font-size: clamp(0.95rem, 1.4vw, 1.08rem);
+  max-width: 70ch;
+}
+
+.hero-cta-group {
+  margin-top: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.cta-link.cta-primary {
+  background: linear-gradient(120deg, rgba(105, 212, 255, 0.42), rgba(157, 123, 255, 0.4));
+  border-color: rgba(185, 221, 255, 0.55);
+}
+
+.cta-link.cta-secondary {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.cta-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(18, 35, 78, 0.38);
 }
 
 .hero-badges {
@@ -157,16 +189,17 @@ a {
 }
 
 .card {
-  padding: 1rem 1rem 1.1rem;
+  padding: 1.05rem 1.05rem 1.15rem;
   min-height: 150px;
   position: relative;
   overflow: hidden;
-  transition: transform 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-4px);
   border-color: rgba(255, 255, 255, 0.36);
+  box-shadow: 0 20px 42px rgba(9, 18, 45, 0.45);
 }
 
 .card h3 {
@@ -196,12 +229,36 @@ a {
   border-radius: 0.75rem;
   padding: 0.55rem 0.65rem;
   background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.card-list li:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .card-list li a {
   font-weight: 600;
   color: #e7f0ff;
   font-size: 0.91rem;
+}
+
+.card-cta {
+  margin-top: 0.78rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  color: #e9f2ff;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 0.7rem;
+  padding: 0.38rem 0.58rem;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.card-cta:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.34);
 }
 
 .card-list li small {
@@ -423,6 +480,12 @@ a {
   padding: 0.5rem 0.75rem;
   background: transparent;
   cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.veribot-trigger:hover {
+  transform: translateY(-1px);
+  border-color: rgba(255, 255, 255, 0.36);
 }
 
 .veribot-panel {
@@ -432,6 +495,7 @@ a {
   grid-template-rows: auto 1fr auto;
   border-radius: 1rem;
   overflow: hidden;
+  border-color: rgba(255, 255, 255, 0.24);
 }
 
 .veribot-head {
@@ -455,6 +519,7 @@ a {
   display: grid;
   gap: 0.45rem;
   overflow: auto;
+  scrollbar-width: thin;
 }
 
 .bubble {
@@ -464,6 +529,7 @@ a {
   font-size: 0.83rem;
   line-height: 1.45;
   border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .bubble.assistant {
@@ -496,6 +562,12 @@ a {
   color: #eff5ff;
   padding: 0.5rem 0.6rem;
   outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.veribot-form input:focus {
+  border-color: rgba(160, 210, 255, 0.55);
+  box-shadow: 0 0 0 3px rgba(105, 212, 255, 0.16);
 }
 
 .veribot-form button {
@@ -505,6 +577,11 @@ a {
   color: #f3f8ff;
   padding: 0.45rem 0.7rem;
   cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.veribot-form button:hover:not(:disabled) {
+  transform: translateY(-1px);
 }
 
 .veribot-form button:disabled {
@@ -742,6 +819,27 @@ a {
 }
 
 @media (max-width: 900px) {
+  .top-nav {
+    position: static;
+  }
+
+  .hero {
+    padding: 1.4rem;
+  }
+
+  .hero h1 {
+    max-width: none;
+  }
+
+  .hero-cta-group {
+    width: 100%;
+  }
+
+  .hero-cta-group .cta-link {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
   .span-8,
   .span-6,
   .span-4,

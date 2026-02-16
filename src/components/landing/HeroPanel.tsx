@@ -10,6 +10,15 @@ export default function HeroPanel() {
         Dijital Pazarlama
       </p>
 
+      <div className="hero-cta-group" aria-label="Öne çıkan aksiyonlar">
+        <a href="#projeler" className="cta-link cta-primary">
+          Vaka Analizlerini İncele
+        </a>
+        <a href="/uyelik" className="cta-link cta-secondary">
+          Premium Katmana Geç
+        </a>
+      </div>
+
       <div className="hero-badges" role="list" aria-label="Uzmanlık etiketleri">
         <span className="badge">AI & ML</span>
         <span className="badge">Data Storytelling</span>

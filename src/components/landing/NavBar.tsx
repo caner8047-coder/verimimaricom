@@ -3,7 +3,7 @@
 export default function NavBar() {
   return (
     <header className="top-nav glass" aria-label="Main navigation">
-      <a href="#" className="brand" aria-label="Veri Mimarı ana sayfa">
+      <a href="/" className="brand" aria-label="Veri Mimarı ana sayfa">
         <span className="dot" />
         <span>VERİ MİMARI</span>
       </a>
