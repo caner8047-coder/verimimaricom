@@ -62,17 +62,17 @@ export default async function CaseStudyDetailPage({ params }: PageProps) {
       </header>
 
       <section className="case-grid" aria-label="Vaka analizi içerik bölümleri">
-        <article className="case-block glass case-col-8">
+        <article className="case-block glass case-col-6">
           <h2>Problem / Hipotez</h2>
           <p>{data.problemStatement || 'Problem tanımı henüz eklenmedi.'}</p>
         </article>
 
-        <article className="case-block glass case-col-4">
+        <article className="case-block glass case-col-6">
           <h2>Metodoloji</h2>
           <p>{data.methodology || 'Metodoloji henüz eklenmedi.'}</p>
         </article>
 
-        <article className="case-block glass case-col-8">
+        <article className="case-block glass case-col-12">
           <h2>Sonuçlar / Analiz</h2>
           <p>{data.outcomeSummary || 'Sonuç özeti henüz eklenmedi.'}</p>
           <MetricsBoard metrics={data.metrics || []} />
@@ -82,6 +82,23 @@ export default async function CaseStudyDetailPage({ params }: PageProps) {
           <h2>Sistem Mimarisi Şeması (Mermaid)</h2>
           <p>Bu blok Sanity üzerinde tanımlanan Mermaid diyagramını dinamik olarak render eder.</p>
           <MermaidDiagram chart={data.architectureDiagramMermaid} />
+        </article>
+
+        <article className="case-col-12">
+          <section className="case-block glass narrative-flow" aria-label="Vaka hikaye akışı">
+            <h2>Vaka Hikâyesi Akışı</h2>
+            <ol>
+              <li>
+                <strong>Problem:</strong> {data.problemStatement || 'Problem tanımı henüz eklenmedi.'}
+              </li>
+              <li>
+                <strong>Metodoloji:</strong> {data.methodology || 'Metodoloji henüz eklenmedi.'}
+              </li>
+              <li>
+                <strong>Sonuç:</strong> {data.outcomeSummary || 'Sonuç özeti henüz eklenmedi.'}
+              </li>
+            </ol>
+          </section>
         </article>
 
         <article className="case-col-12">

@@ -1,4 +1,5 @@
 // @ts-nocheck
+import KpiTrendChart from '@/components/case-study/KpiTrendChart'
 
 function formatValue(value: number | null | undefined, unit?: string) {
   if (value === null || value === undefined) return '-'
@@ -49,6 +50,8 @@ export default function MetricsBoard({ metrics = [] }) {
               <div className="metric-bar" aria-hidden="true">
                 <span style={{ width: `${barWidth}%` }} />
               </div>
+
+              <KpiTrendChart metric={metric} />
             </article>
           )
         })}
