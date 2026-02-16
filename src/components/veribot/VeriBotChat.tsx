@@ -4,9 +4,56 @@
 import { useState } from 'react'
 import { useChat } from 'ai/react'
 
+function formatAssistantContent(content: string) {
+  const parts = String(content || '').split(/\n\s*\n/).filter(Boolean)
+
+  return parts.map((block, index) => {
+    const lines = block
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+
+    const looksLikeList = lines.length > 1 && lines.every((line) => line.startsWith('- ') || /^\d+\./.test(line))
+    const looksLikeReferences = /^kaynaklar:?/i.test(lines[0] || '')
+
+    if (looksLikeReferences) {
+      return (
+        <section key={`ref-${index}`} className="bubble-section refs">
+          <strong>Kaynaklar</strong>
+          <ul>
+            {lines
+              .slice(1)
+              .map((line, i) => line.replace(/^[-*]\s*/, '').trim())
+              .filter(Boolean)
+              .map((line, i) => (
+                <li key={`ref-item-${index}-${i}`}>{line}</li>
+              ))}
+          </ul>
+        </section>
+      )
+    }
+
+    if (looksLikeList) {
+      return (
+        <ul key={`list-${index}`} className="bubble-list">
+          {lines.map((line, i) => (
+            <li key={`line-${index}-${i}`}>{line.replace(/^[-*]\s*/, '').trim()}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    return (
+      <p key={`p-${index}`}>
+        {lines.join(' ')}
+      </p>
+    )
+  })
+}
+
 export default function VeriBotChat() {
   const [open, setOpen] = useState(false)
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: '/api/veribot',
     initialMessages: [
       {
@@ -32,11 +79,30 @@ export default function VeriBotChat() {
           </header>
 
           <div className="veribot-stream" role="log" aria-live="polite">
+            {messages.length <= 1 && !isLoading && (
+              <div className="veribot-empty-state">
+                <strong>Öneri sorular</strong>
+                <ul>
+                  <li>Bu sitede hangi vaka analizleri var?</li>
+                  <li>NLP projelerinde hangi teknoloji yığını kullanıldı?</li>
+                  <li>Premium üyelikte hangi içerikler açılıyor?</li>
+                </ul>
+              </div>
+            )}
+
             {messages.map((m) => (
               <article key={m.id} className={`bubble ${m.role === 'user' ? 'user' : 'assistant'}`}>
-                <p>{m.content}</p>
+                {m.role === 'assistant' ? formatAssistantContent(m.content) : <p>{m.content}</p>}
               </article>
             ))}
+
+            {isLoading && <div className="veribot-status">VeriBot yanıtı hazırlanıyor...</div>}
+
+            {error && (
+              <div className="veribot-status error">
+                VeriBot şu anda yanıt üretemedi. Lütfen sorunuzu yeniden deneyin.
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="veribot-form">
