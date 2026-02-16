@@ -61,6 +61,16 @@ Canlı ortama çıkış öncesinde kalite, güvenlik ve geri dönüş adımları
 - [ ] VeriBot paneli açılıyor ve submit akışı tetikleniyor
 - [ ] Membership checkout başlangıç akışı çalışıyor
 
+## 6.1) Analytics QA Kontrolü (Yeni)
+
+- [ ] Home CTA eventleri geliyor mu? (`cta_home_*`)
+- [ ] Persona path eventleri geliyor mu? (`persona_*_path_click`)
+- [ ] Command palette eventleri geliyor mu? (`command_palette_*`)
+- [ ] VeriBot eventleri geliyor mu? (`veribot_open`, `veribot_submit`)
+- [ ] Membership eventleri geliyor mu? (`membership_checkout_start`, `membership_unlock_*`)
+
+Referans: [`docs/analytics-event-dictionary.md`](docs/analytics-event-dictionary.md)
+
 ---
 
 ## 7) Operasyonel Not
