@@ -7,32 +7,34 @@ import PremiumGate from '@/components/membership/PremiumGate'
 import MermaidDiagram from '@/components/case-study/MermaidDiagram'
 
 type PageProps = {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const data = await getCaseStudyBySlug(params.slug)
+  const { slug } = await params
+  const data = await getCaseStudyBySlug(slug)
 
   return {
     title: data?.title || 'Case Study',
     description: data?.excerpt || 'Veri hikayeciliği odaklı vaka analizi',
     alternates: {
-      canonical: `/projeler/${params.slug}`,
+      canonical: `/projeler/${slug}`,
     },
     openGraph: {
       type: 'article',
       title: data?.title || 'Case Study',
       description: data?.excerpt || 'Veri hikayeciliği odaklı vaka analizi',
-      url: `/projeler/${params.slug}`,
+      url: `/projeler/${slug}`,
     },
   }
 }
 
 export default async function CaseStudyDetailPage({ params }: PageProps) {
-  const data = await getCaseStudyBySlug(params.slug)
-  const jsonLd = getCaseStudyJsonLd(data, params.slug)
+  const { slug } = await params
+  const data = await getCaseStudyBySlug(slug)
+  const jsonLd = getCaseStudyJsonLd(data, slug)
 
   return (
     <main className="page case-study-page" aria-label="Case Study Detay Sayfası">
