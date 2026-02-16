@@ -1,6 +1,7 @@
 "use client"
 
 // @ts-nocheck
+import { trackEvent } from '@/lib/analytics'
 
 export default function MembershipPage() {
   return (
@@ -25,7 +26,21 @@ export default function MembershipPage() {
         <h2>1) Ödeme ile Üyelik Başlat</h2>
         <p>E-posta girin ve checkout akışına yönlenin.</p>
 
-        <form className="checkout-form" action="/api/commerce/checkout" method="GET">
+        <form
+          className="checkout-form"
+          action="/api/commerce/checkout"
+          method="GET"
+          onSubmit={(e) => {
+            const form = e.currentTarget as HTMLFormElement
+            const email = (new FormData(form).get('email') || '').toString()
+
+            trackEvent('membership_checkout_start', {
+              placement: 'membership_page',
+              has_email: Boolean(email),
+              email_domain: email.includes('@') ? email.split('@')[1] : undefined,
+            })
+          }}
+        >
           <input
             type="email"
             name="email"
@@ -57,8 +72,16 @@ export default function MembershipPage() {
             })
 
             if (res.ok) {
+              trackEvent('membership_unlock_success', {
+                placement: 'membership_page',
+                email_domain: email.includes('@') ? email.split('@')[1] : undefined,
+              })
               window.location.href = '/projeler/ornek-vaka'
             } else {
+              trackEvent('membership_unlock_failed', {
+                placement: 'membership_page',
+                email_domain: email.includes('@') ? email.split('@')[1] : undefined,
+              })
               alert('Üyelik doğrulanamadı. Ödeme webhook kaydını kontrol edin.')
             }
           }}

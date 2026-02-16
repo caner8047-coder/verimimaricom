@@ -1,4 +1,5 @@
 // @ts-nocheck
+import TrackLink from '@/components/analytics/TrackLink'
 
 export default function BentoGrid({ cms }) {
   return (
@@ -14,9 +15,14 @@ export default function BentoGrid({ cms }) {
             </li>
           ))}
         </ul>
-        <a className="card-cta" href="/projeler/ornek-vaka">
+        <TrackLink
+          className="card-cta"
+          href="/projeler/ornek-vaka"
+          eventName="cta_home_cases_all_click"
+          payload={{ placement: 'bento', section: 'projeler' }}
+        >
           Tüm Vaka Analizlerini Gör
-        </a>
+        </TrackLink>
       </article>
 
       <article id="blog" className="card glass span-4">
@@ -30,9 +36,14 @@ export default function BentoGrid({ cms }) {
             </li>
           ))}
         </ul>
-        <a className="card-cta" href="/labs">
+        <TrackLink
+          className="card-cta"
+          href="/labs"
+          eventName="cta_home_blog_discover_click"
+          payload={{ placement: 'bento', section: 'blog' }}
+        >
           Yazıları Keşfet
-        </a>
+        </TrackLink>
       </article>
 
       <article id="yetkinlik" className="card glass span-4">
@@ -50,9 +61,14 @@ export default function BentoGrid({ cms }) {
       <article id="lab" className="card glass span-4">
         <h3>Canlı Laboratuvar ve Prototipler</h3>
         <p>Model demoları, hızlı deneyler ve ürünleşmeye hazır prototip yayınları.</p>
-        <a className="card-cta" href="/labs">
+        <TrackLink
+          className="card-cta"
+          href="/labs"
+          eventName="cta_home_labs_click"
+          payload={{ placement: 'bento', section: 'lab' }}
+        >
           Laboratuvara Git
-        </a>
+        </TrackLink>
       </article>
 
       <article id="kaynak" className="card glass span-4">
@@ -65,9 +81,14 @@ export default function BentoGrid({ cms }) {
         <p>
           Yeni ürün geliştirme, veri odaklı dönüşüm ve AI entegrasyonu için iletişime geçin.
         </p>
-        <a className="card-cta" href="mailto:info@verimimari.com">
+        <TrackLink
+          className="card-cta"
+          href="mailto:info@verimimari.com"
+          eventName="cta_home_contact_click"
+          payload={{ placement: 'bento', section: 'iletisim' }}
+        >
           İş Birliği Başlat
-        </a>
+        </TrackLink>
       </article>
     </section>
   )

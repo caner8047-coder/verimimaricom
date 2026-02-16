@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { useChat } from 'ai/react'
+import { trackEvent } from '@/lib/analytics'
 
 function formatAssistantContent(content: string) {
   const parts = String(content || '').split(/\n\s*\n/).filter(Boolean)
@@ -67,7 +68,16 @@ export default function VeriBotChat() {
 
   return (
     <div className={`veribot ${open ? 'open' : ''}`} aria-label="VeriBot chat widget">
-      <button className="veribot-trigger glass" onClick={() => setOpen((s) => !s)}>
+      <button
+        className="veribot-trigger glass"
+        onClick={() => {
+          const nextOpen = !open
+          setOpen(nextOpen)
+          trackEvent(nextOpen ? 'veribot_open' : 'veribot_close', {
+            source: 'floating_widget',
+          })
+        }}
+      >
         {open ? 'Kapat' : 'VeriBot'}
       </button>
 
@@ -105,7 +115,17 @@ export default function VeriBotChat() {
             )}
           </div>
 
-          <form onSubmit={handleSubmit} className="veribot-form">
+          <form
+            onSubmit={(e) => {
+              if (input.trim()) {
+                trackEvent('veribot_submit', {
+                  prompt_length: input.trim().length,
+                })
+              }
+              handleSubmit(e)
+            }}
+            className="veribot-form"
+          >
             <input
               name="prompt"
               value={input}

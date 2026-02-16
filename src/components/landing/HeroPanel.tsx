@@ -1,4 +1,5 @@
 // @ts-nocheck
+import TrackLink from '@/components/analytics/TrackLink'
 
 export default function HeroPanel() {
   return (
@@ -11,12 +12,22 @@ export default function HeroPanel() {
       </p>
 
       <div className="hero-cta-group" aria-label="Öne çıkan aksiyonlar">
-        <a href="#projeler" className="cta-link cta-primary">
+        <TrackLink
+          href="#projeler"
+          className="cta-link cta-primary"
+          eventName="cta_home_featured_cases_click"
+          payload={{ placement: 'hero', cta: 'featured_cases' }}
+        >
           Öne Çıkan Vaka Analizleri
-        </a>
-        <a href="/uyelik" className="cta-link cta-secondary">
+        </TrackLink>
+        <TrackLink
+          href="/uyelik"
+          className="cta-link cta-secondary"
+          eventName="cta_home_premium_click"
+          payload={{ placement: 'hero', cta: 'premium' }}
+        >
           Premium İçeriklere Eriş
-        </a>
+        </TrackLink>
       </div>
 
       <div className="hero-badges" role="list" aria-label="Uzmanlık etiketleri">
