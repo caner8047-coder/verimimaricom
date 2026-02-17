@@ -2,6 +2,7 @@
 import crypto from 'node:crypto'
 import { NextResponse } from 'next/server'
 import { hasMembership } from '@/lib/entitlements'
+import { createS3PresignedGetUrl } from '@/lib/storage'
 
 export const runtime = 'nodejs'
 
@@ -74,12 +75,15 @@ export async function GET(req: Request) {
       return NextResponse.json({ ok: false, error: 'invalid-or-expired-token' }, { status: 401 })
     }
 
-    // Demo response. In production, redirect to S3/R2 presigned URL.
-    return NextResponse.json({
-      ok: true,
-      asset: verified.asset,
-      message: 'Token valid. Replace this response with real object storage redirect.',
-    })
+    const presignedUrl = createS3PresignedGetUrl(verified.asset)
+    if (!presignedUrl) {
+      return NextResponse.json(
+        { ok: false, error: 'storage-config-missing', asset: verified.asset },
+        { status: 503 },
+      )
+    }
+
+    return NextResponse.redirect(presignedUrl, { status: 302 })
   }
 
   return NextResponse.json({ ok: false, error: 'invalid-mode' }, { status: 400 })

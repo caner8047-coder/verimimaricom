@@ -2,11 +2,31 @@
 import { buildRagCorpus } from '@/lib/rag/ingest'
 import { retrieveCandidates } from '@/lib/rag/retrieve'
 import { rankRagContext } from '@/lib/rag/rank'
+import { retrieveFromVectorStore } from '@/lib/rag/vector'
 
 export async function buildRagContext(userQuestion: string) {
+  const vectorCandidates = await retrieveFromVectorStore(userQuestion)
+  if (vectorCandidates?.length) {
+    const ranked = rankRagContext(vectorCandidates)
+    return {
+      ...ranked,
+      diagnostics: {
+        ...(ranked.diagnostics || {}),
+        retrievalMode: 'vector',
+      },
+    }
+  }
+
   const corpus = await buildRagCorpus()
   const candidates = retrieveCandidates(corpus, userQuestion)
-  return rankRagContext(candidates)
+  const ranked = rankRagContext(candidates)
+  return {
+    ...ranked,
+    diagnostics: {
+      ...(ranked.diagnostics || {}),
+      retrievalMode: 'local-fallback',
+    },
+  }
 }
 
 export function toContextText(context: any) {

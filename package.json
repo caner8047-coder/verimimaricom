@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "smoke:test": "node ./scripts/smoke-test.mjs",
-    "growth:weekly": "node ./scripts/growth-weekly-report.mjs"
+    "growth:weekly": "node ./scripts/growth-weekly-report.mjs",
+    "rag:vector:ingest": "node ./scripts/rag-vector-ingest.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.1.15",
