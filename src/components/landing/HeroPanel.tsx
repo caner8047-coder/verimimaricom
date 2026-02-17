@@ -2,24 +2,28 @@
 import TrackLink from '@/components/analytics/TrackLink'
 import OpenCommandPaletteButton from '@/components/navigation/OpenCommandPaletteButton'
 
-export default function HeroPanel() {
+function resolveHref(href: string, basePath: string) {
+  if (String(href || '').startsWith('#')) {
+    return basePath === '/' ? href : `${basePath}${href}`
+  }
+  return href
+}
+
+export default function HeroPanel({ t }) {
   return (
     <section className="hero glass" aria-label="Hero panel">
-      <span className="eyebrow">Veri Mimarı · Strateji + Ürün + Yapay Zeka</span>
-      <h1>Veriyi ölçülebilir büyüme çıktısına dönüştüren dijital ürün ve AI çözümleri</h1>
-      <p>
-        Caner Ünal; veri bilimi, yapay zeka ve web mühendisliğini birleştirerek case study odaklı,
-        iş etkisi üreten platformlar tasarlar.
-      </p>
+      <span className="eyebrow">{t.hero.eyebrow}</span>
+      <h1>{t.hero.title}</h1>
+      <p>{t.hero.description}</p>
 
-      <div className="hero-cta-group" aria-label="Öne çıkan aksiyonlar">
+      <div className="hero-cta-group" aria-label={t.hero.ctaAriaLabel}>
         <TrackLink
-          href="#projeler"
+          href={resolveHref('#projeler', t.basePath)}
           className="cta-link cta-primary"
           eventName="cta_home_featured_cases_click"
           payload={{ placement: 'hero', cta: 'featured_cases' }}
         >
-          Öne Çıkan Vaka Analizleri
+          {t.hero.featuredCases}
         </TrackLink>
         <TrackLink
           href="/uyelik"
@@ -27,11 +31,11 @@ export default function HeroPanel() {
           eventName="cta_home_premium_click"
           payload={{ placement: 'hero', cta: 'premium' }}
         >
-          Premium İçeriklere Eriş
+          {t.hero.premiumAccess}
         </TrackLink>
       </div>
 
-      <div className="hero-badges" role="list" aria-label="Uzmanlık etiketleri">
+      <div className="hero-badges" role="list" aria-label={t.hero.badgeAriaLabel}>
         <span className="badge">AI & ML</span>
         <span className="badge">Data Storytelling</span>
         <span className="badge">Next.js Platform</span>
@@ -39,7 +43,7 @@ export default function HeroPanel() {
       </div>
 
       <OpenCommandPaletteButton className="cmd-chip" source="hero-chip">
-        Komuta Merkezi <kbd>⌘</kbd>+<kbd>K</kbd>
+        {t.hero.commandCenterLabel} <kbd>⌘</kbd>+<kbd>K</kbd>
       </OpenCommandPaletteButton>
     </section>
   )

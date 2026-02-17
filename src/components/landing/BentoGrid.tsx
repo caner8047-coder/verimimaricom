@@ -1,19 +1,26 @@
 // @ts-nocheck
 import TrackLink from '@/components/analytics/TrackLink'
 
-export default function BentoGrid({ cms }) {
+function resolveHref(href: string, basePath: string) {
+  if (String(href || '').startsWith('#')) {
+    return basePath === '/' ? href : `${basePath}${href}`
+  }
+  return href
+}
+
+export default function BentoGrid({ cms, t }) {
   const maturityLabel = (value: string) => {
     const v = String(value || '').toLowerCase()
-    if (v === 'evergreen') return 'Evergreen'
-    if (v === 'growing') return 'Growing'
-    return 'Seed'
+    if (v === 'evergreen') return t.bento.maturity.evergreen
+    if (v === 'growing') return t.bento.maturity.growing
+    return t.bento.maturity.seed
   }
 
   return (
-    <section className="bento-grid" aria-label="Bento modüler ana panel">
+    <section className="bento-grid" aria-label={t.bento.ariaLabel}>
       <article id="projeler" className="card glass span-8">
-        <h3>Öne Çıkan Dönüşüm Vaka Analizleri</h3>
-        <p>Gerçek problem, uygulanan çözüm ve ölçülebilir etki sonuçlarını inceleyin.</p>
+        <h3>{t.bento.projects.title}</h3>
+        <p>{t.bento.projects.description}</p>
         <ul className="card-list">
           {cms.projects.map((project: any, index: number) => (
             <li key={project.slug || index}>
@@ -31,13 +38,13 @@ export default function BentoGrid({ cms }) {
           eventName="cta_home_cases_all_click"
           payload={{ placement: 'bento', section: 'projeler' }}
         >
-          Tüm Vaka Analizlerini Gör
+          {t.bento.projects.allCasesCta}
         </TrackLink>
       </article>
 
       <article id="blog" className="card glass span-4">
-        <h3>Digital Garden Yazıları</h3>
-        <p>Veri hikayeciliği, ürün geliştirme ve AI uygulamaları üzerine son notlar.</p>
+        <h3>{t.bento.blog.title}</h3>
+        <p>{t.bento.blog.description}</p>
         <ul className="card-list compact">
           {cms.blogs.map((post: any, index: number) => (
             <li key={post.slug || index}>
@@ -55,13 +62,13 @@ export default function BentoGrid({ cms }) {
           eventName="cta_home_blog_discover_click"
           payload={{ placement: 'bento', section: 'blog' }}
         >
-          Yazıları Keşfet
+          {t.bento.blog.cta}
         </TrackLink>
       </article>
 
       <article id="yetkinlik" className="card glass span-4">
-        <h3>Teknoloji Yığını ve Yetkinlik Haritası</h3>
-        <p>Projelerde kullanılan araçlar, diller ve platformlar tek bakışta.</p>
+        <h3>{t.bento.skills.title}</h3>
+        <p>{t.bento.skills.description}</p>
         <div className="skill-cloud">
           {cms.skills.map((skill: any, index: number) => (
             <span key={`${skill.name}-${index}`} className="skill-chip">
@@ -72,35 +79,33 @@ export default function BentoGrid({ cms }) {
       </article>
 
       <article id="lab" className="card glass span-4">
-        <h3>Canlı Laboratuvar ve Prototipler</h3>
-        <p>Model demoları, hızlı deneyler ve ürünleşmeye hazır prototip yayınları.</p>
+        <h3>{t.bento.labs.title}</h3>
+        <p>{t.bento.labs.description}</p>
         <TrackLink
           className="card-cta"
           href="/labs"
           eventName="cta_home_labs_click"
           payload={{ placement: 'bento', section: 'lab' }}
         >
-          Laboratuvara Git
+          {t.bento.labs.cta}
         </TrackLink>
       </article>
 
       <article id="kaynak" className="card glass span-4">
-        <h3>Doküman ve Kaynak Merkezi</h3>
-        <p>Sunumlar, raporlar ve operasyonel dokümanlar için düzenli kaynak alanı.</p>
+        <h3>{t.bento.resources.title}</h3>
+        <p>{t.bento.resources.description}</p>
       </article>
 
       <article id="iletisim" className="card glass span-8">
-        <h3>İş Birliği ve Danışmanlık</h3>
-        <p>
-          Yeni ürün geliştirme, veri odaklı dönüşüm ve AI entegrasyonu için iletişime geçin.
-        </p>
+        <h3>{t.bento.contact.title}</h3>
+        <p>{t.bento.contact.description}</p>
         <TrackLink
           className="card-cta"
           href="mailto:info@verimimari.com"
           eventName="cta_home_contact_click"
           payload={{ placement: 'bento', section: 'iletisim' }}
         >
-          İş Birliği Başlat
+          {t.bento.contact.cta}
         </TrackLink>
       </article>
     </section>

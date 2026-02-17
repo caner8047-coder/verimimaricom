@@ -4,18 +4,17 @@ import HeroPanel from '@/components/landing/HeroPanel'
 import BentoGrid from '@/components/landing/BentoGrid'
 import PersonaQuickPaths from '@/components/landing/PersonaQuickPaths'
 import CommandPalette from '@/components/navigation/CommandPalette'
-import { getHomeCmsData } from '@/lib/cms'
-import { getKnowledgeGraphData } from '@/lib/cms'
+import { getHomeCmsData, getKnowledgeGraphData } from '@/lib/cms'
 import KnowledgeGraph from '@/components/garden/KnowledgeGraph'
 import { getDictionary } from '@/lib/i18n'
 
-export default async function HomePage() {
+export default async function HomePageEN() {
   const cms = await getHomeCmsData()
   const graph = await getKnowledgeGraphData()
-  const t = getDictionary('tr')
+  const t = getDictionary('en')
 
   return (
-    <main className="page" aria-label="Veri Mimarı ana sayfa" data-locale={t.locale}>
+    <main className="page" aria-label="Data Architect home page" data-locale={t.locale}>
       <NavBar t={t} />
       <HeroPanel t={t} />
       <PersonaQuickPaths t={t} />

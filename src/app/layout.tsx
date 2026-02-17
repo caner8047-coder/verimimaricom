@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
     languages: {
-      'tr-TR': '/tr',
+      'tr-TR': '/',
       'en-US': '/en',
     },
   },

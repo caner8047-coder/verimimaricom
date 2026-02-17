@@ -96,6 +96,33 @@ a {
   background: rgba(255, 255, 255, 0.1);
 }
 
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  padding: 0.1rem;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.lang-switch a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  padding: 0.22rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+}
+
+.lang-switch a.active {
+  color: #0b1324;
+  background: linear-gradient(120deg, #95d7ff, #b7bcff);
+  box-shadow: 0 4px 12px rgba(130, 187, 255, 0.35);
+}
+
 .nav-links a:hover {
   color: var(--text-0);
   background: rgba(255, 255, 255, 0.07);
