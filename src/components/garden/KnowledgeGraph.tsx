@@ -27,6 +27,14 @@ function maturityColor(maturity: string) {
 
 export default function KnowledgeGraph({ graph }) {
   const [activeNode, setActiveNode] = useState<string | null>(null)
+  const [topicFilter, setTopicFilter] = useState('all')
+  const [maturityFilter, setMaturityFilter] = useState('all')
+  const [recencyFilter, setRecencyFilter] = useState('all')
+
+  const availableTopics = useMemo(() => {
+    const groups = new Set((graph?.nodes || []).map((n: any) => String(n.group || 'General')))
+    return ['all', ...Array.from(groups)]
+  }, [graph])
 
   const layout = useMemo(() => {
     const width = 900
@@ -34,8 +42,20 @@ export default function KnowledgeGraph({ graph }) {
     const cx = width / 2
     const cy = height / 2
     const radius = Math.min(width, height) * 0.34
-    const nodes = graph?.nodes || []
-    const edges = graph?.edges || []
+    const rawNodes = graph?.nodes || []
+    const rawEdges = graph?.edges || []
+
+    const nodes = rawNodes.filter((node: any) => {
+      const topicOk = topicFilter === 'all' || String(node.group || '') === topicFilter
+      const maturityOk = maturityFilter === 'all' || String(node.maturity || '') === maturityFilter
+      const recencyOk = recencyFilter === 'all' || String(node.recency || 'archive') === recencyFilter
+      return topicOk && maturityOk && recencyOk
+    })
+
+    const nodeIdSet = new Set(nodes.map((n: any) => n.id))
+    const edges = rawEdges.filter(
+      (edge: any) => nodeIdSet.has(edge.source) && nodeIdSet.has(edge.target),
+    )
 
     const index = new Map<string, number>()
     nodes.forEach((n: any, i: number) => index.set(n.id, i))
@@ -64,10 +84,43 @@ export default function KnowledgeGraph({ graph }) {
       .filter(Boolean)
 
     return { width, height, points, lines }
-  }, [graph])
+  }, [graph, topicFilter, maturityFilter, recencyFilter])
 
   return (
     <div className="garden-graph" aria-label="Digital Garden knowledge graph">
+      <div className="garden-filters" aria-label="Bilgi grafiği filtreleri">
+        <label>
+          Topic
+          <select value={topicFilter} onChange={(e) => setTopicFilter(e.target.value)}>
+            {availableTopics.map((topic) => (
+              <option key={topic} value={topic}>
+                {topic === 'all' ? 'All Topics' : topic}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          Maturity
+          <select value={maturityFilter} onChange={(e) => setMaturityFilter(e.target.value)}>
+            <option value="all">All Levels</option>
+            <option value="seed">Seed</option>
+            <option value="growing">Growing</option>
+            <option value="evergreen">Evergreen</option>
+          </select>
+        </label>
+
+        <label>
+          Recency
+          <select value={recencyFilter} onChange={(e) => setRecencyFilter(e.target.value)}>
+            <option value="all">All Time</option>
+            <option value="recent">Recent</option>
+            <option value="mid">Mid</option>
+            <option value="archive">Archive</option>
+          </select>
+        </label>
+      </div>
+
       <svg viewBox={`0 0 ${layout.width} ${layout.height}`} role="img" aria-label="Blog ve notlar arası ilişki ağı">
         <defs>
           <radialGradient id="graphGlow" cx="50%" cy="50%" r="50%">

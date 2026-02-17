@@ -1,4 +1,6 @@
 // @ts-nocheck
+import fs from 'node:fs/promises'
+import path from 'node:path'
 import { sanityFetch } from '@/lib/sanity'
 
 const blogQuery = `*[_type == "blogPost"] | order(_updatedAt desc)[0...3]{
@@ -128,6 +130,7 @@ const knowledgeGraphQuery = `*[_type == "contentBase" && kind == "blog_post"]{
   _id,
   title,
   "slug": slug.current,
+  _updatedAt,
   "maturity": coalesce(contentMaturity, "seed"),
   "tags": tags[]->label,
   "related": relatedContents[]{
@@ -141,11 +144,51 @@ const knowledgeGraphQuery = `*[_type == "contentBase" && kind == "blog_post"]{
 
 const fallbackKnowledgeGraph = {
   nodes: [
-    { id: 'n1', label: 'Yapay Zeka Notları', slug: 'yapay-zeka-notlari', group: 'AI', weight: 1, maturity: 'seed' },
-    { id: 'n2', label: 'NLP Pratikleri', slug: 'nlp-pratikleri', group: 'AI', weight: 1, maturity: 'growing' },
-    { id: 'n3', label: 'Veri Hikayeciliği', slug: 'veri-hikayeciligi', group: 'Data', weight: 1, maturity: 'evergreen' },
-    { id: 'n4', label: 'E-ticaret Analitik', slug: 'e-ticaret-analitik', group: 'Growth', weight: 1, maturity: 'growing' },
-    { id: 'n5', label: 'Next.js Mimari', slug: 'nextjs-mimari', group: 'Web', weight: 1, maturity: 'evergreen' },
+    {
+      id: 'n1',
+      label: 'Yapay Zeka Notları',
+      slug: 'yapay-zeka-notlari',
+      group: 'AI',
+      weight: 1,
+      maturity: 'seed',
+      recency: 'recent',
+    },
+    {
+      id: 'n2',
+      label: 'NLP Pratikleri',
+      slug: 'nlp-pratikleri',
+      group: 'AI',
+      weight: 1,
+      maturity: 'growing',
+      recency: 'recent',
+    },
+    {
+      id: 'n3',
+      label: 'Veri Hikayeciliği',
+      slug: 'veri-hikayeciligi',
+      group: 'Data',
+      weight: 1,
+      maturity: 'evergreen',
+      recency: 'mid',
+    },
+    {
+      id: 'n4',
+      label: 'E-ticaret Analitik',
+      slug: 'e-ticaret-analitik',
+      group: 'Growth',
+      weight: 1,
+      maturity: 'growing',
+      recency: 'archive',
+    },
+    {
+      id: 'n5',
+      label: 'Next.js Mimari',
+      slug: 'nextjs-mimari',
+      group: 'Web',
+      weight: 1,
+      maturity: 'evergreen',
+      recency: 'mid',
+    },
   ],
   edges: [
     { source: 'n1', target: 'n2', relationType: 'expands', strength: 0.8 },
@@ -171,18 +214,66 @@ function normalizeMaturity(value: string) {
   return 'seed'
 }
 
+function normalizeRecency(updatedAt: string) {
+  const t = Date.parse(String(updatedAt || ''))
+  if (!Number.isFinite(t)) return 'archive'
+
+  const ageDays = Math.max(0, Math.floor((Date.now() - t) / (1000 * 60 * 60 * 24)))
+  if (ageDays <= 30) return 'recent'
+  if (ageDays <= 120) return 'mid'
+  return 'archive'
+}
+
+async function readObsidianSyncNotes() {
+  try {
+    const filePath = path.join(process.cwd(), 'data', 'obsidian-sync', 'public-notes.json')
+    const raw = await fs.readFile(filePath, 'utf-8')
+    const parsed = JSON.parse(raw)
+    return Array.isArray(parsed?.notes) ? parsed.notes : []
+  } catch {
+    return []
+  }
+}
+
 export async function getKnowledgeGraphData() {
   const raw = await sanityFetch(knowledgeGraphQuery)
-  if (!raw?.length) return fallbackKnowledgeGraph
+  const obsidianNotes = await readObsidianSyncNotes()
 
-  const nodes = raw.map((item: any) => ({
+  if (!raw?.length && !obsidianNotes.length) return fallbackKnowledgeGraph
+
+  const sanityNodes = (raw || []).map((item: any) => ({
     id: item._id,
     label: item.title || 'Untitled',
     slug: item.slug || '',
     group: pickGroup(item.tags || []),
     weight: Math.max(1, (item.related || []).length),
     maturity: normalizeMaturity(item.maturity),
+    recency: normalizeRecency(item._updatedAt),
   }))
+
+  const obsidianNodes = (obsidianNotes || []).map((note: any) => ({
+    id: `obsidian:${note.slug}`,
+    label: note.title || note.slug || 'Untitled Note',
+    slug: note.slug || '',
+    group: 'General',
+    weight: Math.max(1, Number(note.outboundLinks?.length || 0)),
+    maturity: normalizeMaturity(note.maturity),
+    recency: 'recent',
+  }))
+
+  const nodes = [...sanityNodes]
+  const existingNodeIds = new Set(nodes.map((n: any) => n.id))
+  const slugToNodeId = new Map(nodes.map((n: any) => [String(n.slug || ''), n.id]))
+
+  for (const node of obsidianNodes) {
+    if (!node.slug) continue
+    const existingBySlug = slugToNodeId.get(node.slug)
+    if (existingBySlug) continue
+    if (existingNodeIds.has(node.id)) continue
+    nodes.push(node)
+    existingNodeIds.add(node.id)
+    slugToNodeId.set(node.slug, node.id)
+  }
 
   const nodeSet = new Set(nodes.map((n: any) => n.id))
   const edges: any[] = []
@@ -195,13 +286,41 @@ export async function getKnowledgeGraphData() {
         target: rel.targetId,
         relationType: rel.relationType || 'related',
         strength: Number(rel.strength || 0.5),
+        origin: 'sanity',
       })
     }
   }
 
+  for (const note of obsidianNotes || []) {
+    const source = slugToNodeId.get(String(note.slug || ''))
+    if (!source || !nodeSet.has(source)) continue
+
+    for (const backlinkSlug of note.backlinks || []) {
+      const target = slugToNodeId.get(String(backlinkSlug || ''))
+      if (!target || !nodeSet.has(target)) continue
+
+      edges.push({
+        source,
+        target,
+        relationType: 'backlink',
+        strength: 0.55,
+        origin: 'obsidian',
+      })
+    }
+  }
+
+  const uniqueEdges = []
+  const edgeSet = new Set()
+  for (const edge of edges) {
+    const key = `${edge.source}->${edge.target}:${edge.relationType}`
+    if (edgeSet.has(key)) continue
+    edgeSet.add(key)
+    uniqueEdges.push(edge)
+  }
+
   return {
     nodes: nodes.length ? nodes : fallbackKnowledgeGraph.nodes,
-    edges: edges.length ? edges : fallbackKnowledgeGraph.edges,
+    edges: uniqueEdges.length ? uniqueEdges : fallbackKnowledgeGraph.edges,
   }
 }
 

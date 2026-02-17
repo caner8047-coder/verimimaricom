@@ -19,6 +19,14 @@ function normalizeMaturity(raw = '') {
   return 'seed'
 }
 
+function extractWikiLinks(content = '') {
+  const text = String(content || '')
+  const matches = [...text.matchAll(/\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|[^\]]+)?\]\]/g)]
+  return matches
+    .map((m) => String(m[1] || '').trim())
+    .filter(Boolean)
+}
+
 function parseFrontmatter(markdown = '') {
   const text = String(markdown)
   if (!text.startsWith('---\n')) return { meta: {}, body: text }
@@ -64,6 +72,7 @@ async function run() {
 
   const files = await collectMarkdownFiles(VAULT_PATH)
   const synced = []
+  const titleToSlug = new Map()
 
   for (const file of files) {
     const raw = await fs.readFile(file, 'utf-8')
@@ -75,6 +84,9 @@ async function run() {
     const title = meta.title || path.basename(file, '.md')
     const slug = toSlug(meta.slug || title)
     const maturity = normalizeMaturity(meta.maturity)
+    const outboundLinks = extractWikiLinks(body)
+
+    titleToSlug.set(toSlug(title), slug)
 
     synced.push({
       title,
@@ -82,13 +94,51 @@ async function run() {
       maturity,
       sourcePath: file,
       excerpt: String(meta.excerpt || '').trim(),
+      outboundLinks,
+      backlinks: [],
       content: body.trim(),
     })
   }
 
+  const bySlug = new Map(synced.map((note) => [note.slug, note]))
+
+  for (const note of synced) {
+    const resolvedTargets = note.outboundLinks
+      .map((raw) => {
+        const candidate = toSlug(raw)
+        if (bySlug.has(candidate)) return candidate
+        return titleToSlug.get(candidate) || null
+      })
+      .filter(Boolean)
+
+    note.outboundLinks = [...new Set(resolvedTargets)]
+
+    for (const targetSlug of note.outboundLinks) {
+      const target = bySlug.get(targetSlug)
+      if (!target) continue
+      target.backlinks = target.backlinks || []
+      target.backlinks.push(note.slug)
+    }
+  }
+
+  for (const note of synced) {
+    note.backlinks = [...new Set(note.backlinks || [])]
+  }
+
   await fs.mkdir(OUTPUT_DIR, { recursive: true })
   const outputPath = path.join(OUTPUT_DIR, 'public-notes.json')
-  await fs.writeFile(outputPath, JSON.stringify({ generatedAt: new Date().toISOString(), notes: synced }, null, 2), 'utf-8')
+  await fs.writeFile(
+    outputPath,
+    JSON.stringify(
+      {
+        generatedAt: new Date().toISOString(),
+        notes: synced,
+      },
+      null,
+      2,
+    ),
+    'utf-8',
+  )
 
   console.log(`Obsidian sync tamamlandı. ${synced.length} not yazıldı -> ${outputPath}`)
 }
