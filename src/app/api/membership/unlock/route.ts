@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'email-required' }, { status: 400 })
   }
 
-  if (!hasMembership(email)) {
+  if (!(await hasMembership(email))) {
     return NextResponse.json({ ok: false, error: 'membership-not-found' }, { status: 403 })
   }
 
