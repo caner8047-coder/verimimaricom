@@ -4,29 +4,94 @@
 import { useEffect, useMemo, useState } from 'react'
 import { trackEvent } from '@/lib/analytics'
 
-const COMMAND_ITEMS = [
-  { id: 'cases', label: 'Vaka Analizleri', hint: 'Öne çıkan case study bölümü', href: '#projeler' },
-  { id: 'blog', label: 'Yazılar', hint: 'Digital Garden yazıları', href: '#blog' },
-  { id: 'stack', label: 'Teknoloji Yığını', hint: 'Yetenek ve stack görünümü', href: '#yetkinlik' },
-  { id: 'labs', label: 'Labs', hint: 'Canlı laboratuvar ve prototipler', href: '/labs' },
-  { id: 'premium', label: 'Premium Üyelik', hint: 'Üyelik ve unlock akışı', href: '/uyelik' },
-  { id: 'contact', label: 'İş Birliği', hint: 'İletişim ve iş birliği', href: '#iletisim' },
-  { id: 'graph', label: 'Knowledge Graph', hint: 'Bilgi ağı görselleştirmesi', href: '#knowledge-graph' },
-  { id: 'home', label: 'Ana Sayfa', hint: 'Başlangıç ekranı', href: '/' },
-]
+function getLocaleFromPath(pathname: string) {
+  return String(pathname || '').startsWith('/en') ? 'en' : 'tr'
+}
+
+function withBase(basePath: string, href: string) {
+  if (String(href || '').startsWith('#')) {
+    return basePath === '/' ? href : `${basePath}${href}`
+  }
+  return href
+}
+
+function getCommandConfig(locale: string, basePath: string) {
+  if (locale === 'en') {
+    return {
+      panelTitle: 'Command Center',
+      panelSubtitle: 'Fast navigation · Cmd/Ctrl + K',
+      placeholder: 'Ex: Case studies, Labs, Premium',
+      emptyState: 'No matches found.',
+      listAriaLabel: 'Command list',
+      items: [
+        {
+          id: 'cases',
+          label: 'Case Studies',
+          hint: 'Featured case study section',
+          href: withBase(basePath, '#projeler'),
+        },
+        {
+          id: 'blog',
+          label: 'Articles',
+          hint: 'Digital Garden articles',
+          href: withBase(basePath, '#blog'),
+        },
+        {
+          id: 'stack',
+          label: 'Tech Stack',
+          hint: 'Skills and stack overview',
+          href: withBase(basePath, '#yetkinlik'),
+        },
+        { id: 'labs', label: 'Labs', hint: 'Live experiments and prototypes', href: '/en/labs' },
+        { id: 'premium', label: 'Premium Membership', hint: 'Membership and unlock flow', href: '/en/uyelik' },
+        { id: 'contact', label: 'Collaboration', hint: 'Contact and collaboration', href: withBase(basePath, '#iletisim') },
+        {
+          id: 'graph',
+          label: 'Knowledge Graph',
+          hint: 'Knowledge network visualization',
+          href: withBase(basePath, '#knowledge-graph'),
+        },
+        { id: 'home', label: 'Home', hint: 'Start screen', href: '/en' },
+      ],
+    }
+  }
+
+  return {
+    panelTitle: 'Komuta Merkezi',
+    panelSubtitle: 'Hızlı gezinme · Cmd/Ctrl + K',
+    placeholder: 'Örn: Vaka analizleri, Labs, Premium',
+    emptyState: 'Eşleşme bulunamadı.',
+    listAriaLabel: 'Komut listesi',
+    items: [
+      { id: 'cases', label: 'Vaka Analizleri', hint: 'Öne çıkan case study bölümü', href: withBase(basePath, '#projeler') },
+      { id: 'blog', label: 'Yazılar', hint: 'Digital Garden yazıları', href: withBase(basePath, '#blog') },
+      { id: 'stack', label: 'Teknoloji Yığını', hint: 'Yetenek ve stack görünümü', href: withBase(basePath, '#yetkinlik') },
+      { id: 'labs', label: 'Labs', hint: 'Canlı laboratuvar ve prototipler', href: '/labs' },
+      { id: 'premium', label: 'Premium Üyelik', hint: 'Üyelik ve unlock akışı', href: '/uyelik' },
+      { id: 'contact', label: 'İş Birliği', hint: 'İletişim ve iş birliği', href: withBase(basePath, '#iletisim') },
+      { id: 'graph', label: 'Knowledge Graph', hint: 'Bilgi ağı görselleştirmesi', href: withBase(basePath, '#knowledge-graph') },
+      { id: 'home', label: 'Ana Sayfa', hint: 'Başlangıç ekranı', href: '/' },
+    ],
+  }
+}
 
 export default function CommandPalette() {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
 
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '/'
+  const locale = getLocaleFromPath(pathname)
+  const basePath = locale === 'en' ? '/en' : '/'
+  const config = useMemo(() => getCommandConfig(locale, basePath), [locale, basePath])
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return COMMAND_ITEMS
-    return COMMAND_ITEMS.filter((item) => {
+    if (!q) return config.items
+    return config.items.filter((item) => {
       return `${item.label} ${item.hint} ${item.href}`.toLowerCase().includes(q)
     })
-  }, [query])
+  }, [query, config])
 
   useEffect(() => {
     setActiveIndex(0)
@@ -98,8 +163,8 @@ export default function CommandPalette() {
     <div className="cmdk-overlay" onClick={() => setOpen(false)}>
       <section className="cmdk-panel glass" onClick={(e) => e.stopPropagation()} aria-label="Komuta Merkezi">
         <header className="cmdk-head">
-          <strong>Komuta Merkezi</strong>
-          <span>Hızlı gezinme · Cmd/Ctrl + K</span>
+          <strong>{config.panelTitle}</strong>
+          <span>{config.panelSubtitle}</span>
         </header>
 
         <input
@@ -107,11 +172,11 @@ export default function CommandPalette() {
           className="cmdk-input"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Örn: Vaka analizleri, Labs, Premium"
+          placeholder={config.placeholder}
         />
 
-        <div className="cmdk-list" role="listbox" aria-label="Komut listesi">
-          {filtered.length === 0 && <div className="cmdk-empty">Eşleşme bulunamadı.</div>}
+        <div className="cmdk-list" role="listbox" aria-label={config.listAriaLabel}>
+          {filtered.length === 0 && <div className="cmdk-empty">{config.emptyState}</div>}
 
           {filtered.map((item, index) => (
             <button

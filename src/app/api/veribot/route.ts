@@ -24,6 +24,25 @@ function getClientIp(req: Request) {
   return req.headers.get('x-real-ip') || 'unknown-ip'
 }
 
+function detectLocaleFromRequest(req: Request) {
+  const explicit = req.headers.get('x-user-locale') || req.headers.get('x-locale')
+  const referer = req.headers.get('referer') || ''
+  const accept = req.headers.get('accept-language') || ''
+
+  if (String(explicit).toLowerCase().startsWith('en')) return 'en'
+  if (String(explicit).toLowerCase().startsWith('tr')) return 'tr'
+
+  try {
+    const url = new URL(referer)
+    if (url.pathname.startsWith('/en')) return 'en'
+  } catch {
+    // no-op
+  }
+
+  if (String(accept).toLowerCase().includes('en')) return 'en'
+  return 'tr'
+}
+
 const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000
 const RATE_LIMIT_MAX_REQUESTS = 18
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>()
@@ -76,6 +95,7 @@ export async function POST(req: Request) {
 
     const authUserId = getAuthenticatedUserId(req)
     const ip = getClientIp(req)
+    const locale = detectLocaleFromRequest(req)
 
     // Security patch: prevent user impersonation
     if (!authUserId || !userId || userId !== authUserId) {
@@ -118,9 +138,14 @@ export async function POST(req: Request) {
         )}`
       : ''
 
+    const localeInstruction =
+      locale === 'en'
+        ? 'LANGUAGE MODE: Respond in English unless user explicitly asks Turkish.'
+        : 'LANGUAGE MODE: Respond in Turkish unless user explicitly asks another language.'
+
     const result = streamText({
       model: openai(process.env.OPENAI_MODEL || 'gpt-4o-mini'),
-      system: `${SYSTEM_PROMPT}\n\nRAG CONTEXT:\n${ragContext}${actionContextText}`,
+      system: `${SYSTEM_PROMPT}\n\n${localeInstruction}\n\nRAG CONTEXT:\n${ragContext}${actionContextText}`,
       messages,
       temperature: 0.3,
     })
