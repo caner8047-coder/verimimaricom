@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "smoke:test": "node ./scripts/smoke-test.mjs"
+    "smoke:test": "node ./scripts/smoke-test.mjs",
+    "growth:weekly": "node ./scripts/growth-weekly-report.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.1.15",

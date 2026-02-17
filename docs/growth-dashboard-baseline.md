@@ -56,6 +56,22 @@ Kaynak eventler:
 - Top 3 düşen metrik
 - Aksiyonlar (next week)
 
+## Otomasyon Akışı (V1.3)
+
+- Komut: `npm run growth:weekly`
+- Script: [`growth-weekly-report.mjs`](zolm-main/brand-site/next/scripts/growth-weekly-report.mjs)
+- Varsayılan event kaynağı: `data/analytics/events.json`
+- Çıktı: `data/growth/weekly-report-YYYY-MM-DD.json`
+
+Otomasyon KPI çıktıları:
+- Command Palette Open -> Select oranı
+- VeriBot Submit/Open oranı
+- Membership Unlock Success oranı
+
+Not:
+- Event dosyası yoksa script sıfır veri ile rapor üretir ve uyarı notu ekler.
+- CI veya cron pipeline ile haftalık tetiklenmesi önerilir.
+
 ## Minimum Hedefler
 
 - Hero CTA CTR >= %4

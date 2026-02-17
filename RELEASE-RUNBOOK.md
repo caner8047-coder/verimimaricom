@@ -84,6 +84,47 @@ Smoke test URL'i varsayılan olarak `https://verimimari.com` kullanır. Gerekirs
 - Workflow: [`.github/workflows/quality-gates.yml`](.github/workflows/quality-gates.yml)
 - Gate adımları: `npm ci` -> `npm run build` -> `npm run smoke:test`
 
+## 8.1) Quality Scorecard (Release Approval)
+
+Release öncesi kalite puanı tabloya göre hesaplanır.
+
+| Alan | Kontrol | Puan |
+|---|---|---|
+| Build | `npm run build` başarılı | 25 |
+| Smoke | `npm run smoke:test` başarılı | 25 |
+| Analytics QA | Kritik eventler doğrulandı | 15 |
+| Membership | checkout + unlock happy path geçti | 15 |
+| VeriBot | açılış + submit + action hint akışı geçti | 10 |
+| i18n | TR/EN ana akış link kontrolü geçti | 10 |
+
+Toplam: **100**
+
+Release threshold:
+- **>= 85**: Yayına çıkabilir
+- **70-84**: Risk kabulü ile sınırlı yayın (gerekçe zorunlu)
+- **< 70**: Yayın bloklanır
+
+## 8.2) Preview/Canary Gate
+
+- PR aşamasında preview/canary job çalışır.
+- Preview smoke başarısız ise merge bloklanır.
+- Referans gate: `preview-canary-check` job.
+
 ## 9) Incident Template
 
 - Şablon: [`docs/incident-report-template.md`](docs/incident-report-template.md)
+
+## 10) Rollback Trigger Matrix
+
+| Durum | Seviyesi | Aksiyon |
+|---|---|---|
+| Ana rota erişilemiyor (`/`) | Sev-1 | Anında rollback + incident aç |
+| Ödeme webhook 5xx oranı yüksek | Sev-1 | Rollback + webhook queue incele |
+| Membership unlock başarısı < %50 | Sev-2 | Hotfix veya rollback kararı 15 dk içinde |
+| VeriBot tamamen yanıt veremiyor | Sev-2 | Model/env rollback, gerekirse full rollback |
+| Sadece görsel regression | Sev-3 | Hotfix ile düzelt, rollback zorunlu değil |
+
+Karar SLA:
+- Sev-1: **5 dakika** içinde rollback kararı
+- Sev-2: **15 dakika** içinde rollback/hotfix kararı
+- Sev-3: Sonraki patch release'e alınabilir
