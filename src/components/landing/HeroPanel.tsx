@@ -18,7 +18,7 @@ export default function HeroPanel({ t }) {
 
       <div className="hero-cta-group" aria-label={t.hero.ctaAriaLabel}>
         <TrackLink
-          href={resolveHref('#projeler', t.basePath)}
+          href={resolveHref(t.hero.featuredCasesHref || '#projeler', t.basePath)}
           className="cta-link cta-primary"
           eventName="cta_home_featured_cases_click"
           payload={{ placement: 'hero', cta: 'featured_cases' }}
@@ -26,7 +26,7 @@ export default function HeroPanel({ t }) {
           {t.hero.featuredCases}
         </TrackLink>
         <TrackLink
-          href="/uyelik"
+          href={t.hero.premiumAccessHref || '/uyelik'}
           className="cta-link cta-secondary"
           eventName="cta_home_premium_click"
           payload={{ placement: 'hero', cta: 'premium' }}

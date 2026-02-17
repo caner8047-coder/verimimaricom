@@ -31,7 +31,9 @@ export const dictionaries = {
         'Caner Ünal; veri bilimi, yapay zeka ve web mühendisliğini birleştirerek case study odaklı, iş etkisi üreten platformlar tasarlar.',
       ctaAriaLabel: 'Öne çıkan aksiyonlar',
       featuredCases: 'Öne Çıkan Vaka Analizleri',
+      featuredCasesHref: '#projeler',
       premiumAccess: 'Premium İçeriklere Eriş',
+      premiumAccessHref: '/uyelik',
       badgeAriaLabel: 'Uzmanlık etiketleri',
       commandCenterLabel: 'Komuta Merkezi',
     },
@@ -78,6 +80,7 @@ export const dictionaries = {
         title: 'Digital Garden Yazıları',
         description: 'Veri hikayeciliği, ürün geliştirme ve AI uygulamaları üzerine son notlar.',
         cta: 'Yazıları Keşfet',
+        ctaHref: '/labs',
       },
       skills: {
         title: 'Teknoloji Yığını ve Yetkinlik Haritası',
@@ -87,6 +90,7 @@ export const dictionaries = {
         title: 'Canlı Laboratuvar ve Prototipler',
         description: 'Model demoları, hızlı deneyler ve ürünleşmeye hazır prototip yayınları.',
         cta: 'Laboratuvara Git',
+        ctaHref: '/labs',
       },
       resources: {
         title: 'Doküman ve Kaynak Merkezi',
@@ -123,9 +127,9 @@ export const dictionaries = {
       links: [
         { href: '#projeler', label: 'Case Studies' },
         { href: '#blog', label: 'Articles' },
-        { href: '/labs', label: 'Labs' },
+        { href: '/en/labs', label: 'Labs' },
         { href: '#yetkinlik', label: 'Tech Stack' },
-        { href: '/uyelik', label: 'Premium' },
+        { href: '/en/uyelik', label: 'Premium' },
         { href: '#iletisim', label: 'Collaboration' },
       ],
       commandCenterLabel: 'Command Center',
@@ -143,7 +147,9 @@ export const dictionaries = {
         'Caner Ünal designs business-impact platforms by combining data science, AI, and web engineering with a case-study-first approach.',
       ctaAriaLabel: 'Primary actions',
       featuredCases: 'Featured Case Studies',
+      featuredCasesHref: '#projeler',
       premiumAccess: 'Access Premium Content',
+      premiumAccessHref: '/en/uyelik',
       badgeAriaLabel: 'Expertise tags',
       commandCenterLabel: 'Command Center',
     },
@@ -173,7 +179,7 @@ export const dictionaries = {
           title: 'Jump into labs and technical notes',
           description:
             'Go deeper with live prototypes, architecture notes, and Digital Garden content.',
-          href: '/labs',
+          href: '/en/labs',
           cta: 'Open Labs',
           eventName: 'persona_builder_path_click',
         },
@@ -190,6 +196,7 @@ export const dictionaries = {
         title: 'Digital Garden Articles',
         description: 'Latest notes on data storytelling, product development, and applied AI.',
         cta: 'Discover Articles',
+        ctaHref: '/en/labs',
       },
       skills: {
         title: 'Tech Stack and Capability Map',
@@ -199,6 +206,7 @@ export const dictionaries = {
         title: 'Live Labs and Prototypes',
         description: 'Model demos, rapid experiments, and product-ready prototype drops.',
         cta: 'Go to Labs',
+        ctaHref: '/en/labs',
       },
       resources: {
         title: 'Documents and Resource Hub',

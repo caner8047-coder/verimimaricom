@@ -58,7 +58,7 @@ export default function BentoGrid({ cms, t }) {
         </ul>
         <TrackLink
           className="card-cta"
-          href="/labs"
+          href={t.bento.blog.ctaHref || '/labs'}
           eventName="cta_home_blog_discover_click"
           payload={{ placement: 'bento', section: 'blog' }}
         >
@@ -83,7 +83,7 @@ export default function BentoGrid({ cms, t }) {
         <p>{t.bento.labs.description}</p>
         <TrackLink
           className="card-cta"
-          href="/labs"
+          href={t.bento.labs.ctaHref || '/labs'}
           eventName="cta_home_labs_click"
           payload={{ placement: 'bento', section: 'lab' }}
         >
