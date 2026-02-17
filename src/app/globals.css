@@ -780,6 +780,35 @@ a {
   color: #ffd5dc;
 }
 
+.veribot-action-hint {
+  margin-top: 0.45rem;
+  border: 1px solid rgba(151, 211, 255, 0.34);
+  background: rgba(118, 178, 255, 0.08);
+  border-radius: 0.72rem;
+  padding: 0.5rem;
+  display: grid;
+  gap: 0.42rem;
+}
+
+.veribot-action-hint small {
+  color: var(--text-1);
+  font-size: 0.75rem;
+}
+
+.veribot-action-hint button {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-0);
+  border-radius: 0.6rem;
+  padding: 0.36rem 0.6rem;
+  cursor: pointer;
+  justify-self: start;
+}
+
+.veribot-action-hint button:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
 .veribot-form {
   border-top: 1px solid rgba(255, 255, 255, 0.14);
   padding: 0.65rem;

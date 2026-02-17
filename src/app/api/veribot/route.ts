@@ -3,6 +3,7 @@ import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 import { NextResponse } from 'next/server'
 import { buildRagContext, toContextText } from '@/lib/rag'
+import { detectActionIntent, executeToolByAction } from '@/lib/ai/tools'
 
 export const runtime = 'nodejs'
 
@@ -48,56 +49,6 @@ function checkRateLimit(key: string) {
   return { ok: true, remaining: RATE_LIMIT_MAX_REQUESTS - existing.count }
 }
 
-function detectActionIntent(question: string) {
-  const q = String(question || '').toLowerCase().trim()
-
-  if (!q) return null
-
-  const cvRegex = /(cv|özgeçmiş|ozgecmis|resume|indir)/i
-  const meetingRegex = /(randevu|toplantı|toplanti|görüşme|gorusme|takvim|calendly|müsait|musait)/i
-  const projectRegex = /(proje|vaka|case study|örnek vaka|ornek vaka|portfolio|portföy)/i
-
-  if (cvRegex.test(q)) return 'indir_cv'
-  if (meetingRegex.test(q)) return 'randevu_al'
-  if (projectRegex.test(q)) return 'proje_bul'
-
-  return null
-}
-
-function buildActionContext(action: string, question: string) {
-  const cvUrl = process.env.NEXT_PUBLIC_CV_URL || '/Caner-Unal-CV.pdf'
-  const calendarUrl = process.env.NEXT_PUBLIC_CALENDLY_URL || 'https://cal.com'
-
-  if (action === 'indir_cv') {
-    return {
-      action,
-      context: `ToolResult(indir_cv): Kullanıcı CV/özgeçmiş istedi. Yönlendirme URL: ${cvUrl}`,
-      fallback:
-        'CV dosyasına erişimde sorun olursa kullanıcıyı İş Birliği alanına veya iletişim kanalına yönlendir.',
-    }
-  }
-
-  if (action === 'randevu_al') {
-    return {
-      action,
-      context: `ToolResult(randevu_al): Kullanıcı toplantı/randevu istedi. Takvim URL: ${calendarUrl}`,
-      fallback:
-        'Takvim bağlantısı uygun değilse kullanıcıdan tercih ettiği zaman aralığını isteyip iletişim kanalına yönlendir.',
-    }
-  }
-
-  if (action === 'proje_bul') {
-    return {
-      action,
-      context: `ToolResult(proje_bul): Kullanıcı proje/vaka önerisi istedi. Öncelik bağlantılar: /projeler/ornek-vaka, /labs, /#projeler. Kullanıcı sorusu: ${question}`,
-      fallback:
-        'Kesin bilgi yoksa bağlamsal olarak en ilgili 2-3 proje/vaka yolu öner ve nedenini kısa açıkla.',
-    }
-  }
-
-  return null
-}
-
 const SYSTEM_PROMPT = `
 You are VeriBot, the agentic portfolio assistant for Caner Ünal.
 
@@ -113,7 +64,8 @@ Rules:
 Response Contract:
 - Bölüm 1: Kısa Yanıt
 - Bölüm 2: Sonraki Adım (tek net aksiyon)
-- Bölüm 3: Action Hint (JSON) -> {"action":"...","target":"...","reason":"..."}
+- Bölüm 3: Action Hint bloğu (zorunlu, tek satır JSON)
+  <ACTION_HINT>{"action":"...","target":"...","reason":"...","label":"..."}</ACTION_HINT>
 `.trim()
 
 export async function POST(req: Request) {
@@ -150,13 +102,20 @@ export async function POST(req: Request) {
     const lastUser = [...messages].reverse().find((m: any) => m?.role === 'user')
     const userQuestion = lastUser?.content || ''
     const detectedAction = detectActionIntent(userQuestion)
-    const actionCtx = detectedAction ? buildActionContext(detectedAction, userQuestion) : null
+    const toolResult = detectedAction ? executeToolByAction(detectedAction, userQuestion) : null
 
     const rag = await buildRagContext(userQuestion)
     const ragContext = toContextText(rag)
 
-    const actionContextText = actionCtx
-      ? `\n\nACTION CONTEXT:\n${actionCtx.context}\nFallback: ${actionCtx.fallback}`
+    const actionContextText = toolResult
+      ? `\n\nACTION CONTEXT:\n${toolResult.context}\nUse this action payload exactly in <ACTION_HINT>: ${JSON.stringify(
+          {
+            action: toolResult.action,
+            target: toolResult.target,
+            reason: toolResult.reason,
+            label: toolResult.label,
+          },
+        )}`
       : ''
 
     const result = streamText({

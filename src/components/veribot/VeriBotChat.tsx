@@ -4,9 +4,14 @@
 import { useState } from 'react'
 import { useChat } from 'ai/react'
 import { trackEvent } from '@/lib/analytics'
+import { parseActionHintFromText, isSafeTarget } from '@/lib/ai/contracts'
 
 function formatAssistantContent(content: string) {
-  const parts = String(content || '').split(/\n\s*\n/).filter(Boolean)
+  const cleanContent = String(content || '')
+    .replace(/<ACTION_HINT>[\s\S]*?<\/ACTION_HINT>/gi, '')
+    .trim()
+
+  const parts = cleanContent.split(/\n\s*\n/).filter(Boolean)
 
   return parts.map((block, index) => {
     const lines = block
@@ -54,6 +59,23 @@ function formatAssistantContent(content: string) {
 
 export default function VeriBotChat() {
   const [open, setOpen] = useState(false)
+
+  const executeActionHint = (hint: any) => {
+    if (!hint || !isSafeTarget(hint.target)) return
+
+    trackEvent('veribot_action_hint_click', {
+      action: hint.action,
+      target: hint.target,
+    })
+
+    if (String(hint.target).startsWith('#')) {
+      window.location.hash = hint.target
+      return
+    }
+
+    window.location.href = hint.target
+  }
+
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: '/api/veribot',
     initialMessages: [
@@ -102,7 +124,26 @@ export default function VeriBotChat() {
 
             {messages.map((m) => (
               <article key={m.id} className={`bubble ${m.role === 'user' ? 'user' : 'assistant'}`}>
-                {m.role === 'assistant' ? formatAssistantContent(m.content) : <p>{m.content}</p>}
+                {m.role === 'assistant' ? (
+                  <>
+                    {formatAssistantContent(m.content)}
+                    {(() => {
+                      const hint = parseActionHintFromText(m.content)
+                      if (!hint) return null
+
+                      return (
+                        <div className="veribot-action-hint" aria-label="Önerilen aksiyon">
+                          <small>{hint.reason}</small>
+                          <button type="button" onClick={() => executeActionHint(hint)}>
+                            {hint.label}
+                          </button>
+                        </div>
+                      )
+                    })()}
+                  </>
+                ) : (
+                  <p>{m.content}</p>
+                )}
               </article>
             ))}
 
