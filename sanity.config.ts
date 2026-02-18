@@ -10,6 +10,7 @@ const dataset = process.env.NEXT_PUBLIC_SANITY_DATASET || process.env.SANITY_DAT
 export default defineConfig({
   name: 'default',
   title: 'Veri Mimarı Studio',
+  basePath: '/studio',
   projectId,
   dataset,
   plugins: [structureTool(), visionTool()],
